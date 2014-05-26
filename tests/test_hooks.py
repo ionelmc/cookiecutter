@@ -14,6 +14,13 @@ import unittest
 
 from cookiecutter import hooks, utils
 
+if sys.version_info[:3] < (2, 7):
+    import unittest2 as unittest
+else:
+    import unittest
+
+is_windows = sys.platform.startswith('win')
+
 
 class TestFindHooks(unittest.TestCase):
 
@@ -49,11 +56,13 @@ class TestExternalHooks(unittest.TestCase):
         if os.path.exists('tests/test-hooks/input{{hooks}}/shell_post.txt'):
             os.remove('tests/test-hooks/input{{hooks}}/shell_post.txt')
 
+    @unittest.skipIf(condition=is_windows, reason='Skip .sh hook tests on Windows')
     def test_run_hook(self):
         '''execute a hook script, independently of project generation'''
         hooks._run_hook(os.path.join(self.hooks_path, 'post_gen_project.sh'))
         self.assertTrue(os.path.isfile('shell_post.txt'))
 
+    @unittest.skipIf(condition=is_windows, reason='Skip .sh hook tests on Windows')
     def test_run_hook_cwd(self):
         '''Change directory before running hook'''
         hooks._run_hook(os.path.join(self.hooks_path, 'post_gen_project.sh'), 
