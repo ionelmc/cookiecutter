@@ -18,7 +18,6 @@ import click
 
 from cookiecutter import __version__
 from cookiecutter.main import cookiecutter
-from cookiecutter.exceptions import OutputDirExistsException
 
 logger = logging.getLogger(__name__)
 
@@ -68,11 +67,7 @@ def main(template, no_input, checkout, verbose):
             level=logging.INFO
         )
 
-    try:
-        cookiecutter(template, checkout, no_input)
-    except OutputDirExistsException as e:
-        click.echo(e)
-        sys.exit(1)
+    cookiecutter(template, checkout, no_input)
 
 if __name__ == "__main__":  # pragma: no cover
     main()
